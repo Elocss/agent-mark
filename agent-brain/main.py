@@ -1,8 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import uvicorn
 import config
+from agents.chat_agent import generate_chat_response
+from agents.ad_agent import generate_ad_proposal
 
 app = FastAPI(title="Mark Agent Brain API", description="Servidor de IA y Agentes para Mark Growth Agent")
 
@@ -20,6 +22,7 @@ class ChatRequest(BaseModel):
     lead_name: Optional[str] = None
     chat_history: List[ChatMessage]
     current_message: str
+    products: Optional[List[Dict[str, Any]]] = None
 
 class AdRequest(BaseModel):
     client_id: str
@@ -36,7 +39,8 @@ def read_root():
         "provider_configured": {
             "gemini": bool(config.GEMINI_API_KEY),
             "openai": bool(config.OPENAI_API_KEY)
-        }
+        },
+        "default_provider": config.DEFAULT_AI_PROVIDER
     }
 
 @app.post("/chat")
@@ -46,11 +50,27 @@ async def chat_endpoint(request: ChatRequest):
     procesa la respuesta utilizando Gemini o OpenAI, y retorna la respuesta redactada.
     """
     try:
-        # Aquí implementaremos el motor de IA en la Fase 3
-        # Por ahora simulamos una respuesta simple
-        simulated_response = f"Hola, soy {request.bot_name} de {request.client_name}. ¿Cómo puedo ayudarte hoy con tu consulta de {request.current_message}?"
-        return {"response": simulated_response}
+        # Convertir el historial de mensajes Pydantic a lista de diccionarios
+        history = [
+            {"sender": msg.sender, "message": msg.message}
+            for msg in request.chat_history
+        ]
+        
+        # Llamar al agente conversacional
+        clean_response, action, action_data = generate_chat_response(
+            ai_instructions=request.ai_instructions,
+            chat_history=history,
+            current_message=request.current_message,
+            products=request.products
+        )
+        
+        return {
+            "response": clean_response,
+            "action": action,
+            "action_data": action_data
+        }
     except Exception as e:
+        print(f"Error en chat_endpoint: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/generate-ad")
@@ -59,13 +79,15 @@ async def generate_ad_endpoint(request: AdRequest):
     Genera propuestas de textos publicitarios, audiencias y presupuestos usando IA.
     """
     try:
-        # Aquí implementaremos el generador de Ads de IA en la Fase 3
-        return {
-            "ad_copy": f"¡Gran Oferta en {request.client_name}! {request.offer_details}. Haz clic para chatear con nosotros.",
-            "target_radius_km": 5.0,
-            "budget": request.budget_suggested
-        }
+        proposal = generate_ad_proposal(
+            client_name=request.client_name,
+            niche=request.niche,
+            offer_details=request.offer_details,
+            budget_suggested=request.budget_suggested
+        )
+        return proposal
     except Exception as e:
+        print(f"Error en generate_ad_endpoint: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
