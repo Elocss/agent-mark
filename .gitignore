@@ -1,0 +1,33 @@
+# Dependencias de Node
+node_modules/
+dist/
+npm-debug.log*
+
+# Entorno virtual y dependencias de Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Variables de entorno y configuración sensible
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Bases de datos locales
+*.db
+*.db-journal
+database.db
+
+# IDEs y Editores
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

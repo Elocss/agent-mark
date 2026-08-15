@@ -1,0 +1,25 @@
+{
+  "client_id": "nombre-del-local-slug",
+  "client_name": "Nombre Comercial S.A.",
+  "bot_name": "Natalia",
+  "whatsapp_phone_id": "ID_TELEFONO_WHATSAPP_META",
+  "whatsapp_access_token": "ACCESS_TOKEN_META_WHATSAPP",
+  "mercado_pago_access_token": "ACCESS_TOKEN_MERCADO_PAGO_CLIENTE",
+  "notification_email": "ventas@correo-cliente.com",
+  "google_sheet_url": "https://docs.google.com/spreadsheets/d/ID_HOJA_CALCULO/edit",
+  "geo_settings": {
+    "latitude": -34.6037,
+    "longitude": -58.3816,
+    "radius_km": 5
+  },
+  "ai_instructions": "Eres Natalia, una asistente virtual experta en atención al cliente para [Nombre Comercial]. Tu objetivo es responder amablemente preguntas, brindar información sobre precios/servicios y concretar la venta de [Productos/Servicios]. Si el cliente desea comprar, pídele sus datos (Nombre, Teléfono) y pregúntale si prefiere pagar con tarjeta (Mercado Pago) o transferencia.",
+  "products": [
+    {
+      "id": "prod_001",
+      "name": "Servicio/Producto Ejemplo",
+      "price": 5000,
+      "currency": "ARS",
+      "description": "Detalle del servicio de ejemplo."
+    }
+  ]
+}
